@@ -54,51 +54,52 @@ export default function DashboardShell({ children }) {
       <div className="flex-1 lg:pl-72 flex flex-col min-h-screen relative">
         {/* Topbar */}
         <header className={`
-          sticky top-0 z-40 h-20 transition-all duration-300 px-6 lg:px-10 flex items-center justify-between
-          ${scrolled ? 'bg-white/80 backdrop-blur-xl border-b border-slate-100 shadow-sm' : 'bg-transparent'}
+          sticky top-0 z-40 h-24 transition-all duration-500 px-6 lg:px-12 flex items-center justify-between
+          ${scrolled ? 'bg-white/70 backdrop-blur-2xl border-b border-slate-100 shadow-2xl shadow-navy/5' : 'bg-transparent'}
         `}>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
             <button 
               onClick={() => setSidebarOpen(true)}
-              className="p-2 text-navy hover:bg-slate-100 rounded-xl lg:hidden"
+              className="p-3 text-navy bg-white shadow-lg rounded-2xl lg:hidden active:scale-95 transition-transform"
             >
               <Menu size={24} />
             </button>
             
             <div className="hidden sm:block">
-              <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-1">
-                <span className="text-navy/40">LAMP Command</span>
-                <ChevronRight size={10} className="text-gold" />
-                <span className="text-navy">{getBreadcrumb()}</span>
+              <div className="flex items-center gap-3 text-[10px] font-black text-slate-300 uppercase tracking-[0.4em] mb-1.5 italic">
+                <span className="text-gold">Neural Node</span>
+                <div className="w-1 h-1 rounded-full bg-slate-200" />
+                <span className="text-navy/30">{getBreadcrumb()}</span>
               </div>
-              <h1 className="text-2xl font-display font-bold text-navy tracking-tight">{getPageTitle()}</h1>
+              <h1 className="text-3xl font-display font-bold text-navy tracking-tighter uppercase italic leading-none">{getPageTitle()}</h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <div className="hidden md:flex items-center bg-white border border-slate-100 rounded-xl px-4 h-11 w-64 shadow-sm">
-              <Search size={16} className="text-slate-400" />
+          <div className="flex items-center gap-3 md:gap-6">
+            <div className="hidden md:flex items-center bg-white border border-slate-100 rounded-2xl px-6 h-14 w-80 shadow-inner group focus-within:border-navy/20 transition-all">
+              <Search size={18} className="text-slate-200 group-focus-within:text-gold transition-colors" />
               <input 
                 type="text" 
-                placeholder="Search commands..." 
-                className="bg-transparent border-none focus:ring-0 text-sm ml-3 w-full"
+                placeholder="EXECUTE SCAN..." 
+                className="bg-transparent border-none focus:ring-0 text-[11px] font-black tracking-widest ml-4 w-full placeholder:text-slate-200 uppercase italic"
               />
             </div>
 
-            <button className="w-11 h-11 flex items-center justify-center text-slate-400 hover:text-navy hover:bg-white border-transparent hover:border-slate-200 rounded-xl transition-all relative">
-              <Bell size={20} />
-              <span className="absolute top-3 right-3 w-2 h-2 bg-gold rounded-full border-2 border-white ring-2 ring-gold/20 animate-pulse"></span>
+            <button className="w-14 h-14 flex items-center justify-center text-slate-300 hover:text-gold hover:bg-white border-transparent hover:border-slate-100 rounded-2xl transition-all relative group shadow-sm">
+              <Bell size={22} className="group-hover:rotate-12 transition-transform" />
+              <span className="absolute top-4 right-4 w-2.5 h-2.5 bg-gold rounded-full border-2 border-white shadow-[0_0_10px_rgba(212,175,55,0.5)] animate-pulse"></span>
             </button>
 
-            <div className="h-6 w-[1.5px] bg-slate-200 mx-1"></div>
+            <div className="h-8 w-px bg-slate-100 mx-2 hidden sm:block"></div>
 
-            <div className="flex items-center gap-3 pl-2 group cursor-pointer">
+            <div className="flex items-center gap-4 pl-2 group cursor-pointer">
               <div className="flex flex-col items-end hidden md:flex">
-                <span className="text-xs font-bold text-navy leading-none mb-1">{userProfile?.fullName || 'User'}</span>
-                <span className="text-[10px] font-bold text-gold uppercase tracking-wider">{userProfile?.role || 'Team Member'}</span>
+                <span className="text-[12px] font-black text-navy leading-none mb-1 uppercase italic tracking-tight">{userProfile?.fullName || 'Operative'}</span>
+                <span className="text-[9px] font-black text-gold uppercase tracking-[0.2em] italic opacity-60">{userProfile?.role || 'Unit 01'}</span>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-navy flex items-center justify-center text-white font-bold shadow-md group-hover:scale-105 transition-transform">
-                {userProfile?.fullName?.charAt(0) || <User size={18} />}
+              <div className="w-12 h-12 rounded-2xl bg-navy text-white flex items-center justify-center font-bold shadow-2xl group-hover:scale-105 group-hover:shadow-navy/40 transition-all duration-500 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gold/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <span className="relative z-10 font-display italic text-lg">{userProfile?.fullName?.charAt(0) || <User size={20} />}</span>
               </div>
             </div>
           </div>

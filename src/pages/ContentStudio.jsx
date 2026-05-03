@@ -115,46 +115,59 @@ export default function ContentStudio() {
               <div className="flex-1 h-px bg-slate-200" />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
-              {Object.entries(CATEGORIES).map(([key, cat]) => (
-                <motion.div
-                  whileHover={{ y: -8 }}
-                  key={key}
-                  onClick={() => selectCat(key)}
-                  className="premium-card p-10 cursor-pointer group border-b-8 transition-all hover:shadow-2xl hover:shadow-navy/5"
-                  style={{ borderBottomColor: cat.color }}
-                >
-                  <div className="flex justify-between items-start mb-10">
-                    <div className={`w-20 h-20 rounded-[2rem] ${cat.bg} border ${cat.border} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                      <cat.icon size={36} style={{ color: cat.color }} />
+            <div className="grid md:grid-cols-2 gap-10">
+              {Object.entries(CATEGORIES).map(([key, cat]) => {
+                const CategoryIcon = cat.icon;
+                return (
+                  <motion.div
+                    whileHover={{ y: -12, scale: 1.02 }}
+                    key={key}
+                    onClick={() => selectCat(key)}
+                    className="premium-card p-12 cursor-pointer group border-b-8 transition-all hover:shadow-3xl hover:shadow-navy/10 bg-white"
+                    style={{ borderBottomColor: cat.color }}
+                  >
+                    <div className="flex justify-between items-start mb-12">
+                      <div className={`w-24 h-24 rounded-[2.5rem] ${cat.bg} border ${cat.border} flex items-center justify-center group-hover:shadow-xl transition-all duration-500`}>
+                        <CategoryIcon size={44} style={{ color: cat.color }} strokeWidth={1.5} />
+                      </div>
+                      <div className="w-12 h-12 rounded-full bg-offwhite flex items-center justify-center text-slate-300 group-hover:bg-gold group-hover:text-navy transition-all duration-500">
+                        <ArrowRightCircle size={24} />
+                      </div>
                     </div>
-                    <ArrowRightCircle size={28} className="text-slate-200 group-hover:text-gold transition-colors" />
-                  </div>
-                  
-                  <h3 className="text-3xl font-display font-bold text-navy mb-3 tracking-tighter leading-tight">
-                    {cat.label} <br /> 
-                    <span className="text-slate-400">Content Studio</span>
-                  </h3>
-                  <p className="text-slate-500 font-medium mb-10 text-sm">
-                    {cat.description}
-                  </p>
+                    
+                    <div className="space-y-4 mb-12">
+                      <h3 className="text-4xl font-display font-bold text-navy tracking-tighter leading-none italic uppercase">
+                        {cat.label} <br /> 
+                        <span className="text-slate-200">ENGINE</span>
+                      </h3>
+                      <p className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[11px]">
+                        {cat.description}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {cat.types.map((t, i) => (
-                      <span key={i} className="px-3 py-1.5 bg-offwhite border border-slate-100 rounded-lg text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                        {t.label}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
+                    <div className="flex flex-wrap gap-3">
+                      {cat.types.map((t, i) => (
+                        <span key={i} className="px-4 py-2 bg-offwhite border border-slate-100 rounded-xl text-[9px] font-black text-navy uppercase tracking-widest group-hover:bg-white transition-colors">
+                          {t.label}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
-            <div className="p-10 rounded-premium-lg bg-navy/5 border-2 border-dashed border-navy/5 text-center">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-[0.3em] mb-4">Autonomous Intelligence Active</p>
-              <p className="text-sm text-slate-500 font-medium max-w-md mx-auto">
-                Select a platform to reveal the generation workspace. All outputs are synced with active church context.
-              </p>
+            <div className="p-14 rounded-[3rem] bg-navy text-white text-center relative overflow-hidden group">
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 pointer-events-none" />
+              <div className="relative z-10">
+                <p className="text-[11px] font-black text-gold uppercase tracking-[0.5em] mb-6 italic">Neural Transmission Protocol Active</p>
+                <p className="text-lg text-white/70 font-display font-bold italic tracking-tight max-w-2xl mx-auto uppercase">
+                  Select a distribution node to initialize the generation sequence. All transmissions are anchored to the church core knowledge base.
+                </p>
+              </div>
+              <div className="absolute -bottom-10 -right-10 opacity-5 group-hover:scale-110 transition-transform duration-1000">
+                <Zap size={200} />
+              </div>
             </div>
           </motion.div>
         ) : (
@@ -194,164 +207,201 @@ export default function ContentStudio() {
 
             <div className="grid lg:grid-cols-2 gap-10 items-start">
               {/* Generator Panel */}
-              <div className="premium-card p-8 md:p-10 space-y-10 group">
-                <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-gold/20" style={{ background: CATEGORIES[activeCat].color }}>
-                    <CATEGORIES[activeCat].icon size={26} strokeWidth={2} />
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-display font-bold text-navy tracking-tight uppercase">Control Center</h2>
-                    <p className="text-xs text-slate-400 font-bold tracking-widest uppercase">Input Objective Parameters</p>
-                  </div>
-                </div>
+              <div className="premium-card p-10 md:p-14 space-y-12 bg-white border-slate-100 shadow-2xl shadow-navy/5 relative overflow-hidden group">
+                {(() => {
+                  const CategoryIcon = CATEGORIES[activeCat].icon;
+                  return (
+                    <div className="flex items-center gap-6 relative z-10">
+                      <div className="w-16 h-16 rounded-[1.25rem] flex items-center justify-center text-white shadow-2xl shadow-navy/20 relative overflow-hidden" style={{ background: CATEGORIES[activeCat].color }}>
+                        <div className="absolute inset-0 bg-white/10 animate-pulse" />
+                        <CategoryIcon size={32} strokeWidth={2} className="relative z-10" />
+                      </div>
+                      <div>
+                        <h2 className="text-2xl font-display font-bold text-navy tracking-tight uppercase italic leading-none">Command Hub</h2>
+                        <p className="text-[10px] font-black text-slate-300 tracking-[0.3em] uppercase italic mt-1">Configure Mission Parameters</p>
+                      </div>
+                    </div>
+                  );
+                })()}
 
-                <div className="space-y-8">
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-bold text-navy uppercase tracking-widest flex items-center gap-2 mb-1">
-                      <Layout size={14} className="text-gold" />
-                      Content Strategy
+                <div className="space-y-10 relative z-10">
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black text-navy uppercase tracking-[0.3em] flex items-center gap-3 italic">
+                      <div className="w-8 h-8 rounded-lg bg-offwhite flex items-center justify-center text-gold shadow-inner">
+                        <Layout size={14} />
+                      </div>
+                      Mission Objective
                     </label>
-                    <div className="relative">
+                    <div className="relative group/select">
                       <select 
-                        className="w-full h-14 px-5 bg-offwhite border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-navy/5 focus:border-navy outline-none transition-all text-sm font-bold text-navy appearance-none cursor-pointer"
+                        className="w-full h-16 px-8 bg-offwhite border border-slate-100 rounded-[1.25rem] focus:bg-white focus:ring-8 focus:ring-navy/5 focus:border-navy outline-none transition-all text-[13px] font-bold text-navy appearance-none cursor-pointer uppercase tracking-widest shadow-inner italic"
                         value={contentType} 
                         onChange={e => setContentType(e.target.value)}
                       >
                         {CATEGORIES[activeCat].types.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                       </select>
-                      <ChevronRight size={16} className="absolute right-5 top-1/2 -translate-y-1/2 rotate-90 text-slate-400 pointer-events-none" />
+                      <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none group-focus-within/select:rotate-180 transition-transform duration-500">
+                        <ChevronRight size={18} className="rotate-90 text-slate-300" />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-bold text-navy uppercase tracking-widest flex items-center gap-2 mb-1">
-                      <MessageSquare size={14} className="text-gold" />
-                      System Overrides / Context
+                  <div className="space-y-4">
+                    <label className="text-[11px] font-black text-navy uppercase tracking-[0.3em] flex items-center gap-3 italic">
+                      <div className="w-8 h-8 rounded-lg bg-offwhite flex items-center justify-center text-gold shadow-inner">
+                        <MessageSquare size={14} />
+                      </div>
+                      Neural Payload
                     </label>
-                    <div className="relative">
+                    <div className="relative group/textarea">
                       <textarea 
-                        placeholder="Paste sermon summary, event details, or specific directives here..."
-                        className="w-full h-56 px-6 py-5 bg-offwhite border border-slate-100 rounded-3xl focus:bg-white focus:ring-4 focus:ring-navy/5 focus:border-navy outline-none transition-all text-sm font-medium leading-relaxed resize-none shadow-inner"
+                        placeholder="PASTE THE SACRED SCRIPTURES, SERMON EXCERPTS, OR VISION DOCUMENTS HERE..."
+                        className="w-full h-72 px-8 py-8 bg-offwhite border border-slate-100 rounded-[2rem] focus:bg-white focus:ring-8 focus:ring-navy/5 focus:border-navy outline-none transition-all text-sm font-bold leading-relaxed resize-none shadow-inner italic placeholder:text-slate-200 placeholder:tracking-widest"
                         value={context} 
                         onChange={e => setContext(e.target.value)} 
                       />
+                      <div className="absolute top-8 right-8 pointer-events-none opacity-5">
+                         <Sparkles size={40} className="text-navy" />
+                      </div>
                     </div>
                   </div>
 
                   <button 
                     disabled={loading || !context.trim()}
                     onClick={handleGenerate}
-                    className="btn-primary w-full h-16 shadow-2xl shadow-navy/20 active:scale-[0.98] disabled:opacity-40"
+                    className="btn-primary w-full h-20 shadow-3xl shadow-navy/10 active:scale-[0.98] disabled:opacity-40 relative group/submit overflow-hidden"
                   >
+                    <div className="absolute inset-0 bg-gold translate-x-[-100%] group-hover/submit:translate-x-0 transition-transform duration-700 opacity-20" />
                     <AnimatePresence mode="wait">
                       {loading ? (
                         <motion.div 
                           key="loading"
                           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
-                          className="flex items-center gap-3"
+                          className="flex items-center gap-4 relative z-10"
                         >
-                          <div className="w-5 h-5 border-3 border-white/20 border-t-white rounded-full animate-spin" />
-                          <span className="tracking-[0.2em]">ENGAGING NEURAL REASONING</span>
+                          <RefreshCw className="animate-spin text-gold" size={24} />
+                          <span className="text-[12px] font-black tracking-[0.4em] italic">ENGAGING COGNITIVE REASONING</span>
                         </motion.div>
                       ) : (
                         <motion.div 
                           key="ready"
                           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}
-                          className="flex items-center gap-3"
+                          className="flex items-center gap-4 relative z-10"
                         >
-                          <Sparkles size={22} className="text-gold fill-gold/20" />
-                          <span className="tracking-[0.2em]">EXECUTE GENERATION</span>
+                          <Zap size={24} className="text-gold" />
+                          <span className="text-[12px] font-black tracking-[0.4em] italic text-white">EXECUTE TRANSMISSION</span>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </button>
                 </div>
+                
+                <div className="absolute -bottom-20 -left-20 opacity-[0.02] pointer-events-none group-hover:scale-110 transition-transform duration-[2000ms]">
+                   <Laptop size={400} />
+                </div>
               </div>
 
               {/* Output & Deployment */}
-              <div className="space-y-8">
+              <div className="space-y-10">
                 {!output && !loading ? (
-                  <div className="premium-card h-[600px] flex flex-col items-center justify-center text-center p-12 border-dashed border-2 border-slate-200 bg-navy/[0.02]">
-                    <div className="w-24 h-24 rounded-[2.5rem] bg-white flex items-center justify-center mb-8 shadow-xl border border-slate-100 group-hover:rotate-6 transition-transform">
-                      <Cpu size={40} className="text-gold" strokeWidth={1.5} />
+                  <div className="premium-card h-[750px] flex flex-col items-center justify-center text-center p-16 border-dashed border-4 border-slate-100 bg-offwhite/30 rounded-[3rem]">
+                    <div className="w-32 h-32 rounded-[3.5rem] bg-white flex items-center justify-center mb-10 shadow-2xl border border-slate-50 relative group">
+                      <div className="absolute inset-0 bg-gold/5 rounded-[3.5rem] animate-pulse" />
+                      <Cpu size={56} className="text-slate-100 relative z-10" strokeWidth={1} />
                     </div>
-                    <h3 className="text-xs font-bold text-slate-400 uppercase tracking-[0.4em] mb-4">Command Terminal Idle</h3>
-                    <p className="text-sm text-slate-500 leading-relaxed font-medium max-w-[240px]">
-                      Awaiting objective parameters. <br />Generated payload will manifest here.
-                    </p>
+                    <div className="space-y-4">
+                      <h3 className="text-2xl font-display font-bold text-navy uppercase italic tracking-tighter">Transmission Void</h3>
+                      <p className="text-[11px] text-slate-300 font-black uppercase tracking-[0.5em] max-w-[280px] mx-auto leading-relaxed">
+                        Awaiting neural directives. Generated payload will manifest within this terminal.
+                      </p>
+                    </div>
                   </div>
                 ) : loading ? (
-                  <div className="premium-card h-[600px] p-10 space-y-6">
-                    <div className="h-6 w-1/3 bg-slate-100 rounded-lg animate-pulse" />
-                    <div className="space-y-3">
-                      <div className="h-4 w-full bg-slate-100 rounded-lg animate-pulse" />
-                      <div className="h-4 w-full bg-slate-100 rounded-lg animate-pulse" />
-                      <div className="h-4 w-2/3 bg-slate-100 rounded-lg animate-pulse" />
+                  <div className="premium-card h-[750px] p-14 space-y-10 bg-white border-slate-100 rounded-[3rem]">
+                    <div className="flex items-center gap-4">
+                       <div className="w-4 h-4 bg-gold rounded-full animate-ping" />
+                       <div className="h-6 w-1/2 bg-slate-50 rounded-xl animate-pulse" />
                     </div>
-                    <div className="pt-10 space-y-4">
-                      <div className="h-4 w-full bg-slate-100 rounded-lg animate-pulse opacity-50" />
-                      <div className="h-64 w-full bg-offwhite border border-slate-100 rounded-3xl animate-pulse" />
+                    <div className="space-y-6">
+                      <div className="h-4 w-full bg-slate-50 rounded-xl animate-pulse" />
+                      <div className="h-4 w-full bg-slate-50 rounded-xl animate-pulse delay-75" />
+                      <div className="h-4 w-3/4 bg-slate-50 rounded-xl animate-pulse delay-150" />
+                    </div>
+                    <div className="pt-16 space-y-8">
+                      <div className="h-80 w-full bg-offwhite border border-slate-50 rounded-[2.5rem] animate-pulse" />
                     </div>
                   </div>
                 ) : (
                   <motion.div 
-                    initial={{ opacity: 0, x: 20 }}
+                    initial={{ opacity: 0, x: 40 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="space-y-8"
+                    className="space-y-10"
                   >
-                    <div className="premium-card overflow-hidden shadow-2xl shadow-navy/5">
-                      <div className="p-5 bg-navy text-white flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <CheckCircle2 size={18} className="text-gold" />
-                          <span className="text-[11px] font-bold tracking-[0.2em] uppercase">Verified Logic Export</span>
+                    <div className="premium-card overflow-hidden shadow-[0_50px_100px_-20px_rgba(15,23,42,0.1)] border-none rounded-[3rem] bg-white">
+                      <div className="p-8 bg-navy text-white flex flex-col sm:flex-row items-center justify-between gap-6 border-b border-white/5">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 rounded-xl bg-gold/20 flex items-center justify-center text-gold border border-gold/20">
+                             <CheckCircle2 size={24} />
+                          </div>
+                          <div>
+                             <span className="text-[10px] font-black tracking-[0.3em] uppercase italic text-gold">Validated Neural Export</span>
+                             <div className="text-[9px] font-black text-white/40 uppercase tracking-widest mt-1">Conf: 98.4% Integrity</div>
+                          </div>
                         </div>
                         <button 
                           onClick={() => copy(output)}
-                          className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest bg-white/10 hover:bg-white/20 py-2 px-4 rounded-xl transition-all active:scale-95 border border-white/10"
+                          className="flex items-center gap-3 h-12 px-6 bg-white/5 hover:bg-white/10 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all border border-white/10 active:scale-95 group/copy"
                         >
-                          <Copy size={14} />
-                          Copy Output
+                          <Copy size={16} className="group-hover:text-gold transition-colors" />
+                          COPY PAYLOAD
                         </button>
                       </div>
-                      <div className="p-10 bg-ivory/40 min-h-[400px] text-[15px] leading-relaxed text-navy whitespace-pre-wrap font-bold selection:bg-gold selection:text-white">
-                        {output}
+                      
+                      <div className="p-14 bg-offwhite/20 min-h-[500px] relative overflow-hidden group/text">
+                        <div className="relative z-10 text-[15px] leading-relaxed text-navy whitespace-pre-wrap font-bold selection:bg-gold selection:text-white uppercase tracking-tight italic">
+                          {output}
+                        </div>
+                        <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none group-hover/text:scale-110 transition-transform duration-1000">
+                           <Layout size={200} />
+                        </div>
                       </div>
-                      <div className="p-8 border-t border-slate-100 bg-white grid grid-cols-2 gap-6">
+
+                      <div className="p-10 border-t border-slate-50 bg-white grid sm:grid-cols-2 gap-8">
                         <button 
                           onClick={handleSaveToQueue}
-                          className="btn-gold h-14 shadow-xl shadow-gold/20"
+                          className="btn-gold h-16 shadow-2xl shadow-gold/20 rounded-2xl text-[11px] font-black tracking-[0.2em] uppercase italic flex items-center justify-center gap-4 transition-all hover:bg-navy hover:text-white hover:shadow-navy/20 active:scale-95"
                         >
-                          <Save size={18} />
-                          DEPLOY TO QUEUE
+                          <Save size={20} />
+                          COMMIT TO QUEUE
                         </button>
                         <button 
                           onClick={handleGenerate}
-                          className="h-14 border-2 border-slate-100 text-slate-500 rounded-2xl font-bold text-[10px] tracking-widest uppercase flex items-center justify-center gap-2 hover:bg-slate-50 transition-all active:scale-95"
+                          className="h-16 bg-white border-2 border-slate-100 text-slate-400 rounded-2xl text-[11px] font-black tracking-[0.2em] uppercase italic flex items-center justify-center gap-4 hover:border-navy hover:text-navy transition-all active:scale-95"
                         >
-                          <RefreshCw size={18} />
-                          RE-GENERATE
+                          <RefreshCw size={20} />
+                          RE-INITIALIZE
                         </button>
                       </div>
                     </div>
 
-                    <div className="premium-card p-6 flex items-center justify-between border-slate-200/60 shadow-lg shadow-navy/5 bg-white">
-                      <div className="flex items-center gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-600">
-                          <Zap size={20} className="fill-blue-600/10" />
+                    <div className="premium-card p-10 flex items-center justify-between border-slate-200/60 shadow-2xl shadow-navy/5 bg-white rounded-[2.5rem] relative overflow-hidden group">
+                      <div className="flex items-center gap-6 relative z-10">
+                        <div className="w-14 h-14 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-600 shadow-inner">
+                          <Zap size={28} className="fill-blue-600/10" />
                         </div>
                         <div>
-                          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Generation Integrity</div>
-                          <div className="text-sm font-bold text-navy">High-Fidelity Mode Active</div>
+                          <div className="text-[11px] font-black uppercase tracking-[0.3em] text-slate-300 italic">Generation Logic Integrity</div>
+                          <div className="text-lg font-display font-bold text-navy italic">HIGH-FIDELITY COGNITION ACTIVE</div>
                         </div>
                       </div>
-                      <div className="flex gap-1.5 items-end h-4">
+                      <div className="flex gap-2 items-end h-8 relative z-10">
                         {[0.6, 0.4, 0.9, 0.7, 1.0].map((h, i) => (
                           <motion.div 
                             key={i} 
                             initial={{ height: 0 }}
                             animate={{ height: h * 100 + '%' }}
                             transition={{ repeat: Infinity, repeatType: 'reverse', duration: 0.5, delay: i * 0.1 }}
-                            className="w-1.5 bg-gold rounded-full" 
+                            className="w-2 bg-gold rounded-full shadow-[0_0_10px_rgba(212,175,55,0.4)]" 
                           />
                         ))}
                       </div>
