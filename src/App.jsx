@@ -52,11 +52,19 @@ function Loading() {
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-xs p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
+          className="max-w-xs space-y-4"
         >
-          <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest leading-relaxed">
-            The connection to the Command Center is taking longer than expected. Please verify your network and credentials.
-          </p>
+          <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
+            <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest leading-relaxed">
+              The connection to the Command Center is taking longer than expected. Please verify your network and credentials.
+            </p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-6 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-bold text-white uppercase tracking-[0.2em] transition-all"
+          >
+            Refresh Connection
+          </button>
         </motion.div>
       )}
     </div>
@@ -100,10 +108,41 @@ function Pending({ logout }) {
   );
 }
 
+function ConfigurationError() {
+  return (
+    <div className="min-h-screen bg-navy-dark flex items-center justify-center p-6 text-center">
+      <div className="premium-card p-10 max-w-md w-full bg-red-500/5 border-red-500/20">
+        <div className="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 text-red-500">
+          <Clock size={32} />
+        </div>
+        <h2 className="text-xl font-bold text-white mb-4 uppercase tracking-widest">Initialization Failure</h2>
+        <p className="text-red-400 text-sm leading-relaxed mb-6">
+          The LAMP Command Center could not initialize its core data protocols. 
+        </p>
+        <div className="bg-white/5 rounded-lg p-4 mb-8 text-left">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2">Checklist for Admin:</p>
+          <ul className="text-[10px] text-slate-300 space-y-2 list-disc pl-4">
+            <li>Verify VITE_FIREBASE_API_KEY is set</li>
+            <li>Ensure environment variables start with VITE_</li>
+            <li>Check network firewall permissions</li>
+          </ul>
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="w-full h-11 bg-white/10 hover:bg-white/20 text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-all"
+        >
+          Retry Connection
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function AppRoutes() {
-  const { user, userProfile, loading, logout } = useAuth();
+  const { user, userProfile, loading, isConfigured, logout } = useAuth();
 
   if (loading) return <Loading />;
+  if (!isConfigured) return <ConfigurationError />;
   if (!user) return <Login />;
   
   if (!userProfile || userProfile.status === 'new' || userProfile.status === 'pending') {

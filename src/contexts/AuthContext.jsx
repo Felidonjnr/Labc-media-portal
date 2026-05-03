@@ -18,15 +18,28 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [userProfile, setUserProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isConfigured, setIsConfigured] = useState(!!auth);
 
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
   useEffect(() => {
+    // Safety Timeout: If Firebase takes > 10s, force loading to false
+    const safetyTimer = setTimeout(() => {
+      if (loading) {
+        console.warn("Auth initialization timed out. Rescuing...");
+        setLoading(false);
+      }
+    }, 10000);
+
     if (!auth || !auth.onAuthStateChanged) {
       console.error("Firebase Auth is not initialized.");
+      setIsConfigured(false);
       setLoading(false);
+      clearTimeout(safetyTimer);
       return;
     }
+    
+    setIsConfigured(true);
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);
@@ -36,8 +49,12 @@ export function AuthProvider({ children }) {
         setUserProfile(null);
       }
       setLoading(false);
+      clearTimeout(safetyTimer);
     });
-    return unsub;
+    return () => {
+      unsub();
+      clearTimeout(safetyTimer);
+    };
   }, []);
 
   async function loadProfile(firebaseUser) {
@@ -77,7 +94,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{
-      user, userProfile, loading,
+      user, userProfile, loading, isConfigured,
       loginWithEmail, logout,
       isAdmin, isApproved
     }}>
