@@ -106,7 +106,12 @@ export default function SermonEngine() {
                     isDone ? 'bg-gold border-gold text-white' : 'bg-white border-slate-200 text-slate-400'}
                 `}
               >
-                {isDone ? <CheckCircle2 size={24} /> : <s.icon size={22} />}
+                {isDone ? <CheckCircle2 size={24} /> : (
+                  (() => {
+                    const Icon = s.icon;
+                    return <Icon size={22} />;
+                  })()
+                )}
               </div>
               <span className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${isActive ? 'text-navy' : 'text-slate-400'}`}>
                 {s.label}
@@ -259,7 +264,10 @@ export default function SermonEngine() {
                 >
                   <div className="p-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-navy">
-                      <item.icon size={16} className="text-gold" />
+                      {(() => {
+                        const Icon = item.icon;
+                        return <Icon size={16} className="text-gold" />;
+                      })()}
                       <span className="text-[10px] font-bold uppercase tracking-widest">{item.label}</span>
                     </div>
                     <button 

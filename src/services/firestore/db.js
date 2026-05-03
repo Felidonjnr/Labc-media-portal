@@ -64,6 +64,9 @@ import {
   updatedAt: serverTimestamp()
   });
  }
+ export async function deleteQueueItem(id) {
+  await deleteDoc(doc(db, 'lamp_content_queue', id));
+ }
  
  // ── CONTENT HISTORY ──
  export async function getHistoryItems(limitCount = 100) {

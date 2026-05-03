@@ -15,21 +15,26 @@ const firebaseConfig = {
 };
 
 let app;
+let auth;
+let db;
+let storage;
+const googleProvider = new GoogleAuthProvider();
+
 try {
   if (!firebaseConfig.apiKey || firebaseConfig.apiKey === "your_key") {
     throw new Error("Missing Firebase API Key");
   }
   app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  storage = getStorage(app);
 } catch (e) {
   console.error("Firebase init failed: ", e.message);
-  // Fallback to a mock app to allow imports to work without crashing, 
-  // though actual firebase services will fail when called.
-  app = { options: firebaseConfig }; 
+  app = null;
+  auth = null;
+  db = null;
+  storage = null;
 }
 
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-export const db = getFirestore(app);
-export const storage = getStorage(app);
-
+export { auth, googleProvider, db, storage };
 export default app;

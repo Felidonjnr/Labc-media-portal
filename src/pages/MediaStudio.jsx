@@ -74,7 +74,10 @@ export default function MediaStudio() {
           { label: 'Shorts Script', icon: Smartphone },
         ].map((item, i) => (
           <div key={i} className="premium-card p-4 flex flex-col items-center justify-center gap-3 text-slate-300 opacity-60">
-            <item.icon size={18} />
+            {(() => {
+              const Icon = item.icon;
+              return <Icon size={18} />;
+            })()}
             <span className="text-[9px] font-bold uppercase tracking-widest">{item.label}</span>
           </div>
         ))}

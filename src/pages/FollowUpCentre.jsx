@@ -120,7 +120,10 @@ export default function FollowUpCentre() {
           { label: 'Completed Today', val: 0, icon: CheckCircle2, color: 'text-green-500' },
         ].map((stat, i) => (
           <div key={i} className="premium-card p-4 flex flex-col items-center justify-center text-center space-y-1">
-            <stat.icon size={16} className={stat.color} />
+            {(() => {
+              const Icon = stat.icon;
+              return <Icon size={16} className={stat.color} />;
+            })()}
             <div className="text-xl font-bold text-navy tracking-tight">{stat.val}</div>
             <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</div>
           </div>
@@ -189,7 +192,12 @@ export default function FollowUpCentre() {
                 <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
                   <div className="flex items-center gap-4">
                     <div className={`w-12 h-12 rounded-2xl ${typeInfo?.bg} flex items-center justify-center transition-transform group-hover:scale-110 duration-300`}>
-                      {typeInfo && <typeInfo.icon size={22} style={{ color: typeInfo.color }} />}
+                      {typeInfo && (
+                        (() => {
+                          const Icon = typeInfo.icon;
+                          return <Icon size={22} style={{ color: typeInfo.color }} />;
+                        })()
+                      )}
                     </div>
                     <div>
                       <h4 className="text-lg font-bold text-navy tracking-tight">{task.name}</h4>

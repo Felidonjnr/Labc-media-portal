@@ -120,7 +120,10 @@ export default function ContentStudio() {
                   style={{ borderTopColor: cat.color }}
                 >
                   <div className={`w-20 h-20 rounded-[2.5rem] ${cat.bg} ${cat.border} border flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform`}>
-                    <cat.icon size={36} style={{ color: cat.color }} />
+                    {(() => {
+                      const Icon = cat.icon;
+                      return <Icon size={36} style={{ color: cat.color }} />;
+                    })()}
                   </div>
                   <h3 className="text-xl font-bold text-navy mb-2 tracking-tight">{cat.label} Content</h3>
                   <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-6">
@@ -174,7 +177,10 @@ export default function ContentStudio() {
               <div className="premium-card p-6 md:p-8 space-y-6">
                 <div className="flex items-center gap-4 mb-2">
                   <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white shadow-lg`} style={{ background: CATEGORIES[activeCat].color }}>
-                    <CATEGORIES[activeCat].icon size={22} strokeWidth={2.5} />
+                    {(() => {
+                      const Icon = CATEGORIES[activeCat].icon;
+                      return <Icon size={22} strokeWidth={2.5} />;
+                    })()}
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-navy tracking-tight">{CATEGORIES[activeCat].label} Generator</h2>

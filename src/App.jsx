@@ -4,18 +4,39 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChurchProvider } from './contexts/ChurchContext';
 
 import DashboardShell from './components/Layout/DashboardShell';
+import Login from './components/Auth/Login';
+import Home from './pages/Home';
+import ContentStudio from './pages/ContentStudio';
+import SermonEngine from './pages/SermonEngine';
+import FollowUpCentre from './pages/FollowUpCentre';
+import MediaStudio from './pages/MediaStudio';
+import ContentCalendar from './pages/ContentCalendar';
+import ContentQueue from './pages/ContentQueue';
+import ContentHistory from './pages/ContentHistory';
+import KnowledgeDump from './pages/KnowledgeDump';
+import ChurchKnowledge from './pages/ChurchKnowledge';
+import TeamAccess from './pages/TeamAccess';
+
 import { motion } from 'motion/react';
 import { Clock, LogOut, Sparkles } from 'lucide-react';
 
 function Loading() {
+  const [showWarning, setShowWarning] = React.useState(false);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setShowWarning(true), 8000);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-navy-dark flex flex-col items-center justify-center p-6 text-center">
       <div className="w-16 h-16 bg-gold rounded-2xl flex items-center justify-center mb-6 animate-bounce shadow-2xl shadow-gold/20">
         <span className="font-display text-white text-3xl pt-1">L</span>
       </div>
-      <div className="font-display text-2xl tracking-[0.3em] text-white mb-2">INITIALIZING PORTAL</div>
+      <div className="font-display text-2xl tracking-[0.3em] text-white mb-2 uppercase italic">Initializing Portal</div>
       <div className="text-[10px] font-bold tracking-[0.4em] text-silver uppercase mb-8">Light Assembly Media Command</div>
-      <div className="flex gap-2">
+      
+      <div className="flex gap-2 mb-12">
         {[0, 1, 2].map(i => (
           <motion.div
             key={i}
@@ -25,6 +46,18 @@ function Loading() {
           />
         ))}
       </div>
+
+      {showWarning && (
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="max-w-xs p-4 bg-red-500/10 border border-red-500/20 rounded-xl"
+        >
+          <p className="text-[10px] font-bold text-red-500 uppercase tracking-widest leading-relaxed">
+            The connection to the Command Center is taking longer than expected. Please verify your network and credentials.
+          </p>
+        </motion.div>
+      )}
     </div>
   );
 }

@@ -22,6 +22,11 @@ export function AuthProvider({ children }) {
   const ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL;
 
   useEffect(() => {
+    if (!auth || !auth.onAuthStateChanged) {
+      console.error("Firebase Auth is not initialized.");
+      setLoading(false);
+      return;
+    }
     const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         setUser(firebaseUser);

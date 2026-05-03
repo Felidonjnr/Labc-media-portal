@@ -188,7 +188,10 @@ export default function ChurchKnowledge() {
                 onClick={() => setActiveSection(s.id)}
                 className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all font-display tracking-widest uppercase text-[10px] ${activeSection === s.id ? 'bg-navy text-white shadow-xl shadow-navy/20' : 'text-slate-500 hover:bg-slate-50 hover:text-navy'}`}
               >
-                <s.icon size={16} className={activeSection === s.id ? 'text-gold' : 'text-slate-400'} />
+                {(() => {
+                  const Icon = s.icon;
+                  return <Icon size={16} className={activeSection === s.id ? 'text-gold' : 'text-slate-400'} />;
+                })()}
                 {s.label}
               </button>
             ))}
@@ -207,7 +210,11 @@ export default function ChurchKnowledge() {
             >
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-10 h-10 rounded-lg bg-gold/5 flex items-center justify-center text-gold border border-gold/10">
-                  {SECTIONS.find(s => s.id === activeSection).icon({ size: 20 })}
+                  {(() => {
+                    const section = SECTIONS.find(s => s.id === activeSection);
+                    const Icon = section.icon;
+                    return <Icon size={20} />;
+                  })()}
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-navy tracking-tight">{SECTIONS.find(s => s.id === activeSection).label}</h3>

@@ -130,7 +130,10 @@ export default function Home() {
                   className={`p-5 rounded-2xl border flex items-center gap-4 text-left transition-all group ${action.bg}`}
                 >
                   <div className={`p-3 rounded-xl bg-white shadow-sm ${action.color}`}>
-                    <action.icon size={24} strokeWidth={2} />
+                    {(() => {
+                      const Icon = action.icon;
+                      return <Icon size={24} strokeWidth={2} />;
+                    })()}
                   </div>
                   <div className="flex-1">
                     <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1">Recommended</div>
