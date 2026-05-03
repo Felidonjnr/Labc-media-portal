@@ -11,10 +11,11 @@ import {
   Copy, 
   Trash2, 
   Send,
-  Filter,
   Layers,
   Search,
-  ExternalLink
+  Activity,
+  ArrowRight,
+  Shield
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -43,20 +44,20 @@ export default function ContentQueue() {
     try {
       await updateQueueItem(id, { status: 'sent', sentAt: new Date() });
       setItems(prev => prev.filter(i => i.id !== id));
-      showToast('✓ Deployment confirmed');
+      showToast('✓ Deployment confirmed & Logged');
     } catch (err) {
-      showToast('Error updating status');
+      showToast('Deployment log failed');
     }
   }
 
   async function handleDelete(id) {
-    if (!window.confirm('Archive this piece?')) return;
+    if (!window.confirm('Scrub this item from the queue?')) return;
     try {
       await deleteQueueItem(id);
       setItems(prev => prev.filter(i => i.id !== id));
-      showToast('Content archived');
+      showToast('Record purged');
     } catch (err) {
-      showToast('Error archiving');
+      showToast('Purge failed');
     }
   }
 
@@ -66,122 +67,138 @@ export default function ContentQueue() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      {/* Queue Header & Filters */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-navy tracking-tight">Content Queue</h2>
-          <p className="text-slate-500 font-medium tracking-wide">Approved assets ready for platform broadcast.</p>
+    <div className="max-w-6xl mx-auto space-y-12 pb-32 pt-4 px-4 leading-tight">
+      {/* Dashboard Style Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-navy text-gold flex items-center justify-center shadow-lg shadow-navy/20">
+              <Activity size={20} />
+            </div>
+            <h2 className="text-3xl font-display font-bold text-navy tracking-tighter uppercase">Mission Control</h2>
+          </div>
+          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.3em] pl-1">Awaiting Deployment Authorization</p>
         </div>
 
-        <div className="flex items-center gap-2 bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-          <button 
-            onClick={() => setFilter('all')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${filter === 'all' ? 'bg-navy text-white shadow-lg shadow-navy/20' : 'text-slate-400 hover:text-navy'}`}
-          >
-            All
-          </button>
-          <button 
-            onClick={() => setFilter('whatsapp')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${filter === 'whatsapp' ? 'bg-green-500 text-white shadow-lg shadow-green-500/20' : 'text-slate-400 hover:text-green-600'}`}
-          >
-            WhatsApp
-          </button>
-          <button 
-            onClick={() => setFilter('facebook')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${filter === 'facebook' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-slate-400 hover:text-blue-600'}`}
-          >
-            Facebook
-          </button>
+        {/* Tactical Filters */}
+        <div className="flex items-center gap-2 bg-white p-2 rounded-2xl shadow-xl shadow-navy/5 border border-slate-100">
+          {[
+            { id: 'all', label: 'All Operations' },
+            { id: 'whatsapp', label: 'WhatsApp', color: 'text-green-600', activeBg: 'bg-green-600' },
+            { id: 'facebook', label: 'Facebook', color: 'text-blue-600', activeBg: 'bg-blue-600' }
+          ].map(f => (
+            <button 
+              key={f.id}
+              onClick={() => setFilter(f.id)}
+              className={`
+                px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all
+                ${filter === f.id ? `${f.activeBg || 'bg-navy'} text-white shadow-xl` : `${f.color || 'text-slate-400'} hover:bg-slate-50`}
+              `}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
       </div>
 
       {loading ? (
-        <div className="grid gap-4">
+        <div className="space-y-6">
           {[1,2,3].map(i => (
-            <div key={i} className="h-40 bg-slate-100 rounded-2xl animate-pulse" />
+            <div key={i} className="h-48 bg-slate-100 rounded-[2.5rem] animate-pulse" />
           ))}
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid gap-8">
           <AnimatePresence mode="popLayout">
             {filteredItems.map(item => (
               <motion.div 
                 key={item.id}
                 layout
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="premium-card group overflow-hidden"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                className="premium-card relative group overflow-hidden border-l-[12px] transition-all hover:shadow-2xl hover:shadow-navy/5"
+                style={{ borderLeftColor: item.platform === 'whatsapp' ? '#16A34A' : '#1877F2' }}
               >
-                <div className="flex flex-col md:flex-row min-h-[160px]">
-                  {/* Side Indicators */}
-                  <div className={`w-2 md:w-4 ${item.platform === 'whatsapp' ? 'bg-green-500' : 'bg-blue-600'}`} />
-                  
-                  <div className="flex-1 flex flex-col p-6 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${item.platform === 'whatsapp' ? 'bg-green-50 text-green-600' : 'bg-blue-50 text-blue-600'}`}>
-                          {item.platform === 'whatsapp' ? <MessageSquare size={16} /> : <Facebook size={16} />}
-                        </div>
-                        <div>
-                          <div className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-none mb-1">
-                            {item.platform} Engine Build
-                          </div>
-                          <div className="text-sm font-bold text-navy uppercase tracking-tight">
-                            {item.contentType}
-                          </div>
-                        </div>
-                      </div>
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                  {item.platform === 'whatsapp' ? <MessageSquare size={160} /> : <Facebook size={160} />}
+                </div>
 
+                <div className="p-8 md:p-10 relative z-10 flex flex-col md:flex-row gap-10">
+                  {/* Item Metadata */}
+                  <div className="md:w-64 space-y-6 shrink-0">
+                    <div className="space-y-3">
                       <div className="flex items-center gap-2">
-                        <div className="px-3 py-1 bg-amber-50 text-amber-600 rounded-full text-[10px] font-bold uppercase tracking-widest border border-amber-100 flex items-center gap-1.5">
-                          <Clock size={12} />
-                          Pending Dispatch
-                        </div>
+                         <Shield size={14} className="text-gold" />
+                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Auth Protocol</span>
+                      </div>
+                      <h3 className="text-xl font-display font-bold text-navy tracking-tight uppercase italic">{item.contentType}</h3>
+                      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-widest border ${item.platform === 'whatsapp' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${item.platform === 'whatsapp' ? 'bg-green-500' : 'bg-blue-600'}`} />
+                        {item.platform} Broadcast
                       </div>
                     </div>
 
-                    <div className="text-sm text-navy/80 leading-relaxed font-medium whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-100 italic">
+                    <div className="pt-4 space-y-4">
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-offwhite flex items-center justify-center">
+                           <CheckCircle2 size={14} className="text-slate-400" />
+                         </div>
+                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">
+                           Built by <br />
+                           <span className="text-navy">{item.generatedBy?.split('@')[0]}</span>
+                         </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                         <div className="w-8 h-8 rounded-lg bg-offwhite flex items-center justify-center">
+                           <Clock size={14} className="text-gold" />
+                         </div>
+                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-tight">
+                           Queued Status <br />
+                           <span className="text-gold">Ready for Live</span>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content Area */}
+                  <div className="flex-1 space-y-8">
+                    <div className="p-8 bg-offwhite border border-slate-100 rounded-[2rem] shadow-inner font-bold text-[15px] leading-relaxed text-navy italic selection:bg-navy selection:text-white">
                       {item.text}
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-                      <div className="flex items-center gap-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                        <span className="flex items-center gap-1.5">
-                          <CheckCircle2 size={12} className="text-green-500" />
-                          Generated by {item.generatedBy?.split('@')[0]}
-                        </span>
-                        {item.context && (
-                          <span className="flex items-center gap-1.5">
-                            <Layers size={12} className="text-gold" />
-                            Ref: {item.context}
-                          </span>
-                        )}
-                      </div>
+                    <div className="flex flex-wrap items-center justify-between gap-6">
+                       <div className="flex items-center gap-3">
+                         {item.context && (
+                            <div className="px-4 py-2 bg-navy text-white/40 text-[10px] font-bold rounded-xl uppercase tracking-widest flex items-center gap-2">
+                              <Layers size={14} className="text-gold" />
+                              Ref: {item.context}
+                            </div>
+                         )}
+                       </div>
 
-                      <div className="flex items-center gap-2">
-                        <button 
-                          onClick={() => copy(item.text)}
-                          className="h-10 px-4 bg-white border border-slate-200 text-navy font-bold text-[10px] uppercase tracking-widest rounded-lg flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm group/btn"
-                        >
-                          <Copy size={14} className="group-hover/btn:text-gold transition-colors" />
-                          Copy content
-                        </button>
-                        <button 
-                          onClick={() => handleMarkSent(item.id)}
-                          className="h-10 px-4 bg-navy text-white font-bold text-[10px] uppercase tracking-widest rounded-lg flex items-center gap-2 hover:bg-slate-800 transition-all shadow-lg shadow-navy/20 group/btn"
-                        >
-                          <Send size={14} className="group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
-                          Deploy
-                        </button>
-                        <button 
-                          onClick={() => handleDelete(item.id)}
-                          className="h-10 w-10 flex items-center justify-center bg-white border border-slate-200 text-slate-300 hover:text-red-500 hover:border-red-100 transition-all rounded-lg"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
+                       <div className="flex items-center gap-3">
+                         <button 
+                           onClick={() => copy(item.text)}
+                           className="h-12 px-6 bg-white border border-slate-100 rounded-xl text-navy font-bold text-[10px] uppercase tracking-widest flex items-center gap-3 hover:bg-ivory hover:shadow-lg transition-all active:scale-95"
+                         >
+                           <Copy size={16} className="text-slate-400" />
+                           Capture Payload
+                         </button>
+                         <button 
+                           onClick={() => handleMarkSent(item.id)}
+                           className="btn-primary h-12 px-8 shadow-xl shadow-navy/20 active:scale-[0.98] group/btn"
+                         >
+                           <Send size={16} className="group-hover/btn:translate-x-1 transition-transform" />
+                           DEPLOY LIVE
+                         </button>
+                         <button 
+                           onClick={() => handleDelete(item.id)}
+                           className="h-12 w-12 flex items-center justify-center bg-white border border-slate-100 text-slate-300 hover:text-red-500 hover:bg-red-50 hover:border-red-100 transition-all rounded-xl active:scale-90"
+                         >
+                           <Trash2 size={18} />
+                         </button>
+                       </div>
                     </div>
                   </div>
                 </div>
@@ -193,14 +210,14 @@ export default function ContentQueue() {
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="premium-card py-20 flex flex-col items-center justify-center text-center px-12 border-dashed border-2 bg-slate-50/30"
+              className="premium-card py-28 flex flex-col items-center justify-center text-center px-12 border-dashed border-2 border-slate-200 bg-offwhite/50"
             >
-              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm ring-1 ring-slate-100">
-                <Search size={28} className="text-slate-300" />
+              <div className="w-24 h-24 rounded-[2.5rem] bg-white flex items-center justify-center mb-8 shadow-xl border border-slate-100">
+                <Shield size={40} className="text-gold opacity-30" />
               </div>
-              <h3 className="text-sm font-bold text-navy uppercase tracking-[0.2em] mb-2">Queue Clearance</h3>
-              <p className="text-xs text-slate-400 max-w-xs leading-relaxed font-medium">
-                The content queue is currently empty. Generated assets from the Studio will appear here for final deployment.
+              <h3 className="text-sm font-bold text-navy uppercase tracking-[0.4em] mb-4">Command Deck Cleared</h3>
+              <p className="text-xs text-slate-400 max-w-sm leading-relaxed font-bold uppercase tracking-widest">
+                0 Pending deployments detected. <br />Engage the Production Studio to manifest new assets.
               </p>
             </motion.div>
           )}
@@ -209,3 +226,4 @@ export default function ContentQueue() {
     </div>
   );
 }
+

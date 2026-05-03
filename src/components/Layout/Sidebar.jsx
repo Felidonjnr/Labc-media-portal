@@ -1,158 +1,121 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Sparkles, 
-  BookOpen, 
+  Mic2, 
   Layers, 
   Calendar, 
-  HeartHandshake, 
+  Users, 
   Camera, 
   History, 
   Brain, 
   Database, 
-  Users, 
-  Settings,
+  ShieldCheck,
   ChevronRight,
   LogOut,
-  Menu,
-  X
+  Settings
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 
-const NavGroup = ({ title, children, isOpen }) => (
-  <div className="mb-6">
-    <h3 className={`px-4 mb-2 text-[10px] font-bold tracking-[0.2em] text-silver uppercase transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}>
+const NavGroup = ({ title, items }) => (
+  <div className="mb-8">
+    <h3 className="px-4 mb-3 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] opacity-60">
       {title}
     </h3>
-    <div className="space-y-1">
-      {children}
+    <div className="mx-2 space-y-1">
+      {items.map((item) => (
+        <NavLink
+          key={item.path}
+          to={item.path}
+          className={({ isActive }) => `
+            flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group
+            ${isActive 
+              ? 'bg-gold text-white shadow-lg shadow-gold/20 font-bold' 
+              : 'text-slate-400 hover:text-white hover:bg-white/5'}
+          `}
+        >
+          <item.icon size={18} className={`${item.color || ''} transition-colors`} />
+          <span className="flex-1 text-sm tracking-tight">{item.label}</span>
+          <ChevronRight size={14} className="opacity-0 group-hover:opacity-40 transition-opacity" />
+        </NavLink>
+      ))}
     </div>
   </div>
 );
 
-const NavItem = ({ to, icon: Icon, label, isOpen }) => (
-  <NavLink
-    to={to}
-    className={({ isActive }) => `
-      flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group
-      ${isActive 
-        ? 'bg-gold text-white shadow-lg shadow-gold/20' 
-        : 'text-slate-400 hover:text-white hover:bg-white/5'}
-    `}
-  >
-    <Icon size={20} className="shrink-0" />
-    <AnimatePresence mode="wait">
-      {isOpen && (
-        <motion.span
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -10 }}
-          className="text-sm font-medium whitespace-nowrap"
-        >
-          {label}
-        </motion.span>
-      )}
-    </AnimatePresence>
-    {!isOpen && (
-      <div className="absolute left-full ml-4 px-2 py-1 bg-navy-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
-        {label}
-      </div>
-    )}
-  </NavLink>
-);
-
-export default function Sidebar({ isOpen, toggleSidebar }) {
+export default function Sidebar() {
   const { logout, userProfile } = useAuth();
 
+  const mainItems = [
+    { label: 'Dashboard', path: '/', icon: LayoutDashboard },
+    { label: 'Create Content', path: '/studio', icon: Sparkles },
+    { label: 'Sermon Engine', path: '/sermon', icon: Mic2 },
+    { label: 'Content Queue', path: '/queue', icon: Layers },
+  ];
+
+  const operationsItems = [
+    { label: 'Calendar', path: '/calendar', icon: Calendar },
+    { label: 'Follow-Up', path: '/followup', icon: Users },
+    { label: 'Media Studio', path: '/media', icon: Camera },
+    { label: 'Archive', path: '/history', icon: History },
+  ];
+
+  const adminItems = [
+    { label: 'AI Brain', path: '/church', icon: Brain },
+    { label: 'Knowledge Dump', path: '/knowledge', icon: Database },
+    { label: 'Team Nexus', path: '/team', icon: ShieldCheck },
+  ];
+
   return (
-    <aside 
-      className={`
-        fixed left-0 top-0 h-full bg-navy bg-navy-dark border-r border-white/5 z-50 transition-all duration-300 ease-in-out
-        ${isOpen ? 'w-64' : 'w-20'}
-      `}
-    >
-      {/* Logo Area */}
-      <div className="h-20 flex items-center px-6 border-b border-white/5">
-        <div className="flex items-center gap-3 overflow-hidden">
-          <div className="w-8 h-8 rounded-lg bg-gold flex items-center justify-center shrink-0">
-            <span className="text-white font-display text-xl leading-none pt-1">L</span>
+    <aside className="w-[280px] lg:w-72 bg-navy h-full flex flex-col text-white shadow-[10px_0_40px_rgba(0,0,0,0.1)] z-50">
+      {/* Brand Header */}
+      <div className="h-24 flex items-center px-8">
+        <div className="flex items-center gap-4">
+          <div className="w-11 h-11 bg-gold rounded-[1.2rem] flex items-center justify-center shadow-lg shadow-gold/20 transform -rotate-3">
+            <span className="font-display font-bold text-white text-2xl pt-1">L</span>
           </div>
-          {isOpen && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="flex flex-col"
-            >
-              <span className="font-display text-lg tracking-widest text-white leading-none pt-1">LAMP</span>
-              <span className="text-[9px] text-silver tracking-[0.15em] uppercase font-bold">Media Portal</span>
-            </motion.div>
-          )}
+          <div>
+            <h1 className="font-display font-bold text-xl tracking-tighter leading-none">LAMP</h1>
+            <p className="text-[9px] text-slate-500 uppercase tracking-[0.2em] mt-1 font-bold">Media Command</p>
+          </div>
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="p-4 h-[calc(100%-160px)] overflow-y-auto custom-scrollbar">
-        <NavGroup title="Main" isOpen={isOpen}>
-          <NavItem to="/" icon={LayoutDashboard} label="Dashboard" isOpen={isOpen} />
-          <NavItem to="/studio" icon={Sparkles} label="Create Content" isOpen={isOpen} />
-          <NavItem to="/sermon" icon={BookOpen} label="Sermon Engine" isOpen={isOpen} />
-          <NavItem to="/queue" icon={Layers} label="Content Queue" isOpen={isOpen} />
-        </NavGroup>
+      {/* Navigation Groups */}
+      <nav className="flex-1 px-2 py-4 overflow-y-auto no-scrollbar">
+        <NavGroup title="Production" items={mainItems} />
+        <NavGroup title="Operations" items={operationsItems} />
+        <NavGroup title="Intelligence" items={adminItems} />
+      </nav>
 
-        <NavGroup title="Operations" isOpen={isOpen}>
-          <NavItem to="/calendar" icon={Calendar} label="Calendar" isOpen={isOpen} />
-          <NavItem to="/followup" icon={HeartHandshake} label="Follow-Up Centre" isOpen={isOpen} />
-          <NavItem to="/media" icon={Camera} label="Media Studio" isOpen={isOpen} />
-          <NavItem to="/history" icon={History} label="Content History" isOpen={isOpen} />
-        </NavGroup>
-
-        <NavGroup title="Brain & Admin" isOpen={isOpen}>
-          <NavItem to="/church" icon={Brain} label="Church Knowledge" isOpen={isOpen} />
-          <NavItem to="/knowledge" icon={Database} label="Knowledge Dump" isOpen={isOpen} />
-          <NavItem to="/team" icon={Users} label="Team Access" isOpen={isOpen} />
-          <NavItem to="/settings" icon={Settings} label="Settings" isOpen={isOpen} />
-        </NavGroup>
-      </div>
-
-      {/* User Area */}
-      <div className="absolute bottom-0 left-0 w-full p-4 border-t border-white/5 bg-navy-deep">
-        <div className="flex items-center justify-between">
-          {isOpen && (
-            <div className="flex items-center gap-3 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-silver text-xs font-bold uppercase leading-none">
-                {userProfile?.fullName?.charAt(0) || 'U'}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-semibold text-white truncate">{userProfile?.fullName || 'User'}</span>
-                <span className="text-[10px] text-silver truncate uppercase tracking-wider font-medium">{userProfile?.role || 'Team'}</span>
-              </div>
+      {/* User Actions Account */}
+      <div className="p-6 mt-auto border-t border-white/5 bg-navy-dark/30">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center text-gold border border-white/10">
+              <Settings size={14} />
             </div>
-          )}
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Preferences</span>
+          </div>
           <button 
             onClick={logout}
-            className="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors group relative"
+            className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+            title="Logout"
           >
-            <LogOut size={18} />
-            {!isOpen && (
-              <div className="absolute left-full ml-4 px-2 py-1 bg-navy-dark text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 whitespace-nowrap">
-                Logout
-              </div>
-            )}
+            <LogOut size={16} />
           </button>
         </div>
+        
+        <div className="p-4 rounded-2xl bg-gold/5 border border-gold/10">
+          <p className="text-[9px] text-gold/60 uppercase tracking-widest font-bold mb-1">Church Portal</p>
+          <p className="text-[11px] text-white/80 font-medium leading-relaxed">
+            Light Assembly Bible Church — Global Registry
+          </p>
+        </div>
       </div>
-
-      {/* Collapse Toggle */}
-      <button 
-        onClick={toggleSidebar}
-        className="absolute -right-3 top-24 w-6 h-6 bg-gold hover:bg-gold-dark text-white rounded-full flex items-center justify-center shadow-lg transition-colors border-2 border-bg hidden md:flex"
-      >
-        <motion.div animate={{ rotate: isOpen ? 180 : 0 }}>
-          <ChevronRight size={14} />
-        </motion.div>
-      </button>
     </aside>
   );
 }
+

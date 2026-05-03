@@ -20,14 +20,19 @@ import {
   Clock,
   Send,
   AlertTriangle,
-  History
+  History,
+  Activity,
+  ArrowRight,
+  Shield,
+  Zap,
+  TrendingUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const TYPES = [
-  { value: 'first_timer', label: 'First Timer', icon: UserPlus, color: '#C9960C', bg: 'bg-gold/10', promptType: 'welcome_message' },
-  { value: 'absentee', label: 'Absentee', icon: Heart, color: '#DC2626', bg: 'bg-red-50', promptType: 'absentee_checkin' },
-  { value: 'visitor', label: 'Visitor', icon: MessageSquare, color: '#10B981', bg: 'bg-emerald-50', promptType: 'welcome_message' },
+  { value: 'first_timer', label: 'First Timer', icon: UserPlus, color: '#D4AF37', bg: 'bg-gold/10', promptType: 'welcome_message' },
+  { value: 'absentee', label: 'Absentee', icon: Heart, color: '#EF4444', bg: 'bg-red-50', promptType: 'absentee_checkin' },
+  { value: 'visitor', label: 'Visitor', icon: Activity, color: '#10B981', bg: 'bg-emerald-50', promptType: 'welcome_message' },
 ];
 
 export default function FollowUpCentre() {
@@ -96,86 +101,114 @@ export default function FollowUpCentre() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-12">
-      {/* Header & Care Dashboard Stats */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-navy tracking-tight">Care Command Center</h2>
-          <p className="text-slate-500 font-medium tracking-wide">Monitor and engage with members needing follow-up.</p>
+    <div className="max-w-5xl mx-auto space-y-12 pb-32 pt-4 px-4 leading-tight">
+      {/* Dynamic Header */}
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gold text-white flex items-center justify-center shadow-lg shadow-gold/20">
+              <TrendingUp size={20} />
+            </div>
+            <h2 className="text-3xl font-display font-bold text-navy tracking-tighter uppercase">Care Command</h2>
+          </div>
+          <p className="text-slate-400 font-bold text-[11px] uppercase tracking-[0.3em] pl-1">Outreach & Engagement Operations</p>
         </div>
         <button 
           onClick={() => setShowForm(true)}
-          className="h-12 px-6 bg-navy text-white rounded-xl font-bold text-[11px] uppercase tracking-[0.2em] shadow-xl shadow-navy/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="btn-primary h-14 px-10 shadow-2xl shadow-navy/20 active:scale-[0.98] flex items-center gap-3 text-sm"
         >
-          <Plus size={18} />
-          Log Care Need
+          <Plus size={20} />
+          <span className="font-bold tracking-widest text-[11px]">LOG CARE PROTOCOL</span>
         </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      {/* Radar Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         {[
-          { label: 'Pending Care', val: tasks.length, icon: Clock, color: 'text-amber-500' },
-          { label: 'First Timers', val: tasks.filter(t => t.type === 'first_timer').length, icon: UserPlus, color: 'text-gold' },
-          { label: 'Urgent Care', val: tasks.filter(t => t.type === 'absentee').length, icon: AlertTriangle, color: 'text-red-500' },
-          { label: 'Completed Today', val: 0, icon: CheckCircle2, color: 'text-green-500' },
+          { label: 'Pending Active', val: tasks.length, icon: Activity, color: 'text-amber-500', bg: 'bg-amber-50/50' },
+          { label: 'New Arrivals', val: tasks.filter(t => t.type === 'first_timer').length, icon: UserPlus, color: 'text-gold', bg: 'bg-gold/5' },
+          { label: 'Urgent Care', val: tasks.filter(t => t.type === 'absentee').length, icon: AlertTriangle, color: 'text-red-500', bg: 'bg-red-50/50' },
+          { label: 'Cleared Today', val: 0, icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-50/50' },
         ].map((stat, i) => (
-          <div key={i} className="premium-card p-4 flex flex-col items-center justify-center text-center space-y-1">
-            {(() => {
-              const Icon = stat.icon;
-              return <Icon size={16} className={stat.color} />;
-            })()}
-            <div className="text-xl font-bold text-navy tracking-tight">{stat.val}</div>
-            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</div>
+          <div key={i} className={`premium-card p-6 flex flex-col items-center justify-center text-center space-y-3 transition-transform hover:scale-[1.02] ${stat.bg} border-transparent`}>
+             <div className={`w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm ${stat.color}`}>
+               <stat.icon size={20} />
+             </div>
+             <div className="space-y-0.5">
+               <div className="text-2xl font-display font-bold text-navy tracking-tight">{stat.val}</div>
+               <div className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{stat.label}</div>
+             </div>
           </div>
         ))}
       </div>
 
+      {/* Log Form Overlay */}
       <AnimatePresence>
         {showForm && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="premium-card p-6 md:p-8 space-y-6 ring-2 ring-gold/20"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-navy/60 backdrop-blur-md p-6"
           >
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-navy uppercase tracking-widest">New Follow-up Task</h3>
-              <button onClick={() => setShowForm(false)} className="text-slate-300 hover:text-navy"><X size={20} /></button>
-            </div>
-            
-            <div className="grid sm:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Member Full Name</label>
-                <input 
-                  className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold/20 focus:border-gold outline-none transition-all text-sm font-semibold"
-                  placeholder="Ebuka Emmanuel..."
-                  value={form.name} 
-                  onChange={e => setForm(p => ({ ...p, name: e.target.value }))} 
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Care Category</label>
-                <select 
-                  className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-gold/20 focus:border-gold outline-none transition-all text-sm font-semibold appearance-none"
-                  value={form.type} 
-                  onChange={e => setForm(p => ({ ...p, type: e.target.value }))}
-                >
-                  {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-            </div>
-
-            <button 
-              onClick={handleAdd}
-              className="w-full h-12 bg-gold text-white rounded-xl font-bold text-xs uppercase tracking-widest active:scale-[0.98] transition-all shadow-lg shadow-gold/10"
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
+              className="premium-card max-w-xl w-full p-10 md:p-12 space-y-10 shadow-[0_40px_100px_-20px_rgba(15,23,42,0.5)] border-gold/10"
             >
-              Add to Portal
-            </button>
+              <div className="flex items-center justify-between">
+                <div>
+                   <h3 className="text-2xl font-display font-bold text-navy uppercase italic mb-1">New Care Entry</h3>
+                   <div className="h-1 w-12 bg-gold rounded-full" />
+                </div>
+                <button onClick={() => setShowForm(false)} className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 hover:text-navy transition-colors shadow-inner"><X size={20} /></button>
+              </div>
+              
+              <div className="space-y-8">
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                     <Shield size={12} className="text-gold" />
+                     Subject Identity (Full Name)
+                  </label>
+                  <input 
+                    className="w-full h-14 px-6 bg-offwhite border border-slate-100 rounded-2xl focus:bg-white focus:ring-8 focus:ring-gold/10 focus:border-gold outline-none transition-all text-sm font-bold shadow-inner"
+                    placeholder="Enter full name..."
+                    value={form.name} 
+                    onChange={e => setForm(p => ({ ...p, name: e.target.value }))} 
+                  />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                     <BookmarkIcon size={12} className="text-gold" />
+                     Task Classification
+                  </label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {TYPES.map(t => (
+                      <button 
+                        key={t.value}
+                        onClick={() => setForm(p => ({ ...p, type: t.value }))}
+                        className={`p-4 rounded-xl border text-[10px] font-bold uppercase tracking-widest transition-all text-center flex flex-col items-center gap-2
+                          ${form.type === t.value ? 'bg-navy border-navy text-white shadow-xl shadow-navy/20' : 'bg-white border-slate-100 text-slate-400 hover:border-gold'}
+                        `}
+                      >
+                        <t.icon size={16} />
+                        {t.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleAdd}
+                className="btn-gold w-full h-16 shadow-2xl shadow-gold/20 active:scale-[0.98] font-bold tracking-[0.3em] text-xs"
+              >
+                COMMIT TO OPERATIONS
+              </button>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="space-y-4">
+      {/* Task List */}
+      <div className="space-y-8">
         <AnimatePresence mode="popLayout">
           {tasks.map(task => {
             const typeInfo = TYPES.find(t => t.value === task.type);
@@ -184,56 +217,53 @@ export default function FollowUpCentre() {
               <motion.div 
                 layout
                 key={task.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: 20 }}
-                className="premium-card group overflow-hidden"
+                className="premium-card group hover:shadow-2xl hover:shadow-navy/5 transition-all overflow-hidden"
               >
-                <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl ${typeInfo?.bg} flex items-center justify-center transition-transform group-hover:scale-110 duration-300`}>
-                      {typeInfo && (
-                        (() => {
-                          const Icon = typeInfo.icon;
-                          return <Icon size={22} style={{ color: typeInfo.color }} />;
-                        })()
-                      )}
+                <div className="p-8 md:p-10 flex flex-col lg:flex-row lg:items-center justify-between gap-10">
+                  <div className="flex items-center gap-6">
+                    <div className={`w-20 h-20 rounded-[2rem] ${typeInfo?.bg} flex items-center justify-center shadow-sm relative group-hover:rotate-6 transition-transform flex-shrink-0`}>
+                       <typeInfo.icon size={32} style={{ color: typeInfo.color }} strokeWidth={1.5} />
+                       <div className="absolute -top-1 -right-1 w-5 h-5 bg-white border-2 border-slate-50 rounded-full flex items-center justify-center animate-pulse">
+                          <div className="w-1.5 h-1.5 rounded-full bg-gold" />
+                       </div>
                     </div>
                     <div>
-                      <h4 className="text-lg font-bold text-navy tracking-tight">{task.name}</h4>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: typeInfo?.color }}>
-                          {typeInfo?.label}
-                        </span>
-                        <span className="text-[10px] text-slate-300">•</span>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                          Added {new Date(task.createdAt?.seconds * 1000).toLocaleDateString()}
-                        </span>
+                      <div className="flex items-center gap-3 mb-1">
+                         <span className="text-[10px] font-bold uppercase tracking-[0.2em] px-3 py-1 rounded-full bg-slate-50 border border-slate-100" style={{ color: typeInfo?.color }}>
+                           {typeInfo?.label}
+                         </span>
+                         <span className="text-[10px] text-slate-300 font-bold uppercase tracking-widest bg-white border border-slate-50 px-3 py-1 rounded-full">
+                           Ref: {new Date(task.createdAt?.seconds * 1000).toLocaleDateString()}
+                         </span>
                       </div>
+                      <h4 className="text-3xl font-display font-bold text-navy tracking-tight">{task.name}</h4>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-4">
                     <button 
                       onClick={() => handleGenerate(task)}
                       disabled={loading && isActive}
-                      className="h-11 px-5 bg-white border border-slate-200 text-navy rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-slate-50 transition-all shadow-sm active:scale-95 group/btn"
+                      className="h-14 px-8 bg-navy text-white rounded-2xl font-bold tracking-[0.2em] uppercase text-[10px] flex items-center gap-3 hover:bg-navy-dark transition-all shadow-xl shadow-navy/20 active:scale-95 group/btn"
                     >
-                      <Sparkles size={14} className="group-hover/btn:text-gold transition-colors" />
-                      {isActive && loading ? 'Thinking...' : 'Draft Message'}
+                      <Sparkles size={18} className="text-gold group-hover/btn:animate-spin" />
+                      {isActive && loading ? 'ENGINE PROCESSING...' : 'MANIPULATE DRAFT'}
                     </button>
                     <button 
-                      className="h-11 w-11 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-xl hover:text-navy hover:border-navy transition-all shadow-sm"
-                      onClick={() => showToast('Feature: Action coming soon')}
+                      className="h-14 w-14 flex items-center justify-center bg-white border border-slate-100 text-slate-400 rounded-2xl hover:text-navy hover:shadow-xl transition-all active:scale-90 shadow-sm"
+                      onClick={() => showToast('Protocol: VoIP Redirect coming soon')}
                     >
-                      <Phone size={16} />
+                      <Phone size={22} strokeWidth={1.5} />
                     </button>
                     <button 
                       onClick={() => handleDone(task.id)}
-                      className="h-11 px-5 bg-navy/5 text-navy rounded-xl font-bold text-[10px] uppercase tracking-widest flex items-center gap-2 hover:bg-navy hover:text-white transition-all active:scale-95"
+                      className="h-14 px-8 bg-green-50 text-green-600 border border-green-100 rounded-2xl font-bold tracking-[0.2em] uppercase text-[10px] flex items-center gap-3 hover:bg-green-600 hover:text-white transition-all active:scale-95 shadow-sm"
                     >
-                      <CheckCircle2 size={14} />
-                      Done
+                      <CheckCircle2 size={18} />
+                      COMPLETE
                     </button>
                   </div>
                 </div>
@@ -244,32 +274,40 @@ export default function FollowUpCentre() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-slate-100 bg-slate-50/50"
+                      className="border-t border-slate-100 bg-ivory/20"
                     >
-                      <div className="p-6 space-y-4">
+                      <div className="p-10 space-y-8">
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Sparkles size={14} className="text-gold" />
-                            <span className="text-[10px] font-black uppercase tracking-widest text-navy">AI Care Recommendation</span>
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-gold flex items-center justify-center text-white">
+                               <Zap size={16} />
+                            </div>
+                            <span className="text-[11px] font-black uppercase tracking-[0.3em] text-navy italic">Care Logic Generated</span>
                           </div>
                           <button 
                             onClick={() => copy(output)}
-                            className="text-[10px] font-bold text-gold hover:text-navy uppercase tracking-widest flex items-center gap-1.5 transition-colors"
+                            className="text-[10px] font-bold text-gold hover:text-navy uppercase tracking-[0.3em] flex items-center gap-2 transition-colors group/copy"
                           >
-                            <Copy size={12} />
-                            Copy Draft
+                            <Copy size={14} className="group-hover/copy:scale-110 transition-transform" />
+                            CAPTURE PAYLOAD
                           </button>
                         </div>
-                        <div className="p-5 bg-white border border-slate-200 rounded-2xl text-sm leading-relaxed italic text-navy font-medium shadow-sm">
+                        <div className="p-8 bg-white border border-slate-100 rounded-[2rem] text-lg leading-relaxed italic text-navy font-bold shadow-inner">
                           {output}
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-end gap-4">
+                           <button 
+                            className="bg-navy/5 text-slate-400 px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-navy/10 transition-all font-display"
+                            onClick={() => setOutput('')}
+                          >
+                            DISCARD
+                          </button>
                           <button 
-                            className="bg-gold/10 text-gold px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest hover:bg-gold hover:text-white transition-all flex items-center gap-2"
+                            className="btn-gold px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] active:scale-95 shadow-xl shadow-gold/20 flex items-center gap-3 group/link"
                             onClick={() => showToast('Redirecting to Content Studio...')}
                           >
-                            <Send size={12} />
-                            Send via Studio
+                            ENGAGE STUDIO
+                            <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
                           </button>
                         </div>
                       </div>
@@ -282,31 +320,43 @@ export default function FollowUpCentre() {
         </AnimatePresence>
 
         {tasks.length === 0 && (
-          <div className="premium-card py-20 bg-slate-50/30 border-dashed border-2 flex flex-col items-center justify-center text-center">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-6 shadow-sm border border-slate-100">
-              <CheckCircle2 size={28} className="text-green-500" />
+          <div className="premium-card py-32 bg-offwhite/50 border-dashed border-2 border-slate-200 flex flex-col items-center justify-center text-center px-12">
+            <div className="w-24 h-24 rounded-[3rem] bg-white flex items-center justify-center mb-10 shadow-2xl border border-slate-100">
+               <Shield size={40} className="text-gold opacity-30" strokeWidth={1} />
             </div>
-            <h3 className="text-sm font-bold text-navy uppercase tracking-widest mb-2">All Clear</h3>
-            <p className="text-xs text-slate-400 max-w-xs leading-relaxed">No pending care items. New follow-ups will appear here once logged.</p>
+            <h3 className="text-sm font-bold text-navy uppercase tracking-[0.5em] mb-4 italic">Operational Silence</h3>
+            <p className="text-[10px] text-slate-400 max-w-sm leading-relaxed font-bold uppercase tracking-[0.2em]">All care protocols are currently completed. <br />New alerts will manifest as they are logged.</p>
           </div>
         )}
       </div>
 
-      {/* Historical Context */}
-      <div className="premium-card p-6 bg-navy text-white relative overflow-hidden group">
-        <div className="relative z-10 space-y-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-              <History size={20} className="text-gold" />
+      {/* Historical Intelligence */}
+      <div className="premium-card p-12 bg-navy text-white relative overflow-hidden group border-none">
+        <div className="relative z-10 grid md:grid-cols-2 gap-12 items-center">
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-gold shadow-2xl">
+                <History size={28} />
+              </div>
+              <h3 className="text-3xl font-display font-bold tracking-tight italic uppercase">Care Intelligence</h3>
             </div>
-            <h3 className="text-lg font-bold tracking-tight italic">Church Care Intelligence</h3>
+            <p className="text-sm text-slate-400 max-w-xl leading-relaxed font-medium">
+              The Follow-up Portal leverages the Church Knowledge Base to derive personalized engagement scripts. Every interaction is synchronized with current spiritual themes.
+            </p>
           </div>
-          <p className="text-sm text-slate-300 max-w-xl leading-relaxed">
-            The Follow-up Portal uses the Church Knowledge Base to ensure every message resonates with our current sermon series and values.
-          </p>
+          <div className="relative h-40 hidden md:block">
+             <div className="absolute inset-0 bg-gradient-to-l from-gold/5 via-transparent to-transparent flex items-center justify-end">
+                <Activity size={160} className="text-white/5" />
+             </div>
+          </div>
         </div>
-        <div className="absolute top-0 right-0 h-40 w-40 bg-gold/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 group-hover:scale-150 transition-transform duration-700" />
+        <div className="absolute bottom-0 right-0 h-96 w-96 bg-gold/5 rounded-full blur-[100px] translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-1000" />
       </div>
     </div>
   );
 }
+
+function BookmarkIcon({ size, className }) {
+  return <Shield size={size} className={className} />;
+}
+

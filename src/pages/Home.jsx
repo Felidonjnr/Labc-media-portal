@@ -10,17 +10,20 @@ import {
   ChevronRight, 
   Calendar as CalendarIcon, 
   Users, 
-  MessageSquare, 
   Zap, 
   TrendingUp,
-  LayoutDashboard
+  LayoutDashboard,
+  BrainCircuit,
+  PlusCircle,
+  Activity,
+  ArrowUpRight
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-const DAY_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DAY_TASKS = {
-  0: { tasks: ['Record today\'s service', 'Go live on Facebook', 'Generate Sunday Recap tonight', 'Log first timers in Follow-Up'], forward: false },
+  0: { tasks: ['Record today\'s service', 'Go live on Facebook', 'Generate Sunday Recap tonight', 'Log visitors in Follow-Up'], forward: false },
   1: { tasks: ['Send Monday Fuel voice note', 'Distribute sermon audio', 'Send welcome messages to Sunday visitors'], forward: false },
   2: { tasks: ['Send Testimony Tuesday prompt', 'Check first timers were welcomed', 'The Word Today broadcast'], forward: false },
   3: { tasks: ['Post Sermon Quote Card on Facebook', 'Update WhatsApp Status with sermon quote', 'The Word Today broadcast'], forward: false },
@@ -44,7 +47,7 @@ export default function Home() {
   const dayIdx = today.getDay();
   const hour = today.getHours();
   const greeting = hour < 12 ? 'Good Morning' : hour < 17 ? 'Good Afternoon' : 'Good Evening';
-  const name = userProfile?.fullName?.split(' ')[0] || 'Team';
+  const name = userProfile?.fullName?.split(' ')[0] || 'Team Member';
   const dayData = DAY_TASKS[dayIdx];
 
   useEffect(() => { 
@@ -63,175 +66,197 @@ export default function Home() {
       });
 
       if (followups.length > 0) {
-        actions.push({ icon: Users, label: `${followups.length} Care Tasks Pending`, path: '/followup', urgency: 'high', color: 'text-red-500', bg: 'bg-red-50 border-red-100' });
+        actions.push({ icon: Users, label: `${followups.length} Care Tasks`, path: '/followup', urgency: 'high', theme: 'bg-red-50 text-red-600 border-red-100' });
       }
       const pendingQueue = queue.filter(i => i.status === 'pending');
       if (pendingQueue.length > 0) {
-        actions.push({ icon: Clock, label: `${pendingQueue.length} Queue Items for Approval`, path: '/queue', urgency: 'medium', color: 'text-amber-500', bg: 'bg-amber-50 border-amber-100' });
+        actions.push({ icon: Clock, label: `${pendingQueue.length} Approval Pending`, path: '/queue', urgency: 'medium', theme: 'bg-gold-light/40 text-gold border-gold/10' });
       }
       if (dayIdx === 0 || dayIdx === 6) {
-        actions.push({ icon: Sparkles, label: 'Sermon Pack Not Generated', path: '/sermon', urgency: 'high', color: 'text-gold', bg: 'bg-ivory border-gold/10' });
+        actions.push({ icon: Sparkles, label: 'Generate Sermon Pack', path: '/sermon', urgency: 'high', theme: 'bg-navy text-white border-navy-dark' });
       }
       
-      // Fillers if few actions
-      if (actions.length < 3) {
-        actions.push({ icon: BookOpen, label: 'Explore Media Studio', path: '/media', urgency: 'low', color: 'text-navy', bg: 'bg-slate-50 border-slate-200' });
+      if (actions.length < 4) {
+        actions.push({ icon: PlusCircle, label: 'New Content Creation', path: '/studio', urgency: 'low', theme: 'bg-slate-50 text-slate-500 border-slate-100' });
       }
-    } catch { }
+    } catch (err) {
+      console.error(err);
+    }
     setNextActions(actions.slice(0, 4));
   }
 
   return (
-    <div className="space-y-8 pb-12">
-      {/* Hero Welcome */}
-      <div className="relative overflow-hidden rounded-[2rem] bg-navy-dark p-8 md:p-12 text-white shadow-2xl">
-        <div className="absolute top-0 right-0 w-1/2 h-full opacity-10 pointer-events-none">
-          <TrendingUp size={400} className="absolute -bottom-20 -right-20 transform -rotate-12" />
+    <div className="space-y-10 pb-20">
+      {/* Premium Hero Header */}
+      <section className="relative overflow-hidden rounded-premium-lg bg-navy p-10 md:p-14 text-white shadow-2xl shadow-navy/20">
+        <div className="absolute top-0 right-0 w-1/2 h-full opacity-5 pointer-events-none">
+          <Activity size={400} className="absolute -bottom-20 -right-20 transform -rotate-12" />
         </div>
-        <div className="relative z-10 max-w-2xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-gold rounded-full text-[10px] font-bold tracking-[0.2em] uppercase mb-6">
-            <Zap size={12} className="fill-white" />
-            Media Portal Core
-          </div>
-          <h1 className="font-display text-5xl md:text-6xl tracking-wider leading-none mb-4">
-            {greeting.toUpperCase()}, <br />
-            <span className="text-gold">{name.toUpperCase()}</span>
+        
+        <div className="relative z-10">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 bg-gold/20 border border-gold/20 rounded-full text-[10px] font-bold tracking-[0.2em] uppercase text-gold mb-8"
+          >
+            <Zap size={12} className="fill-gold" />
+            Media Command Core Online
+          </motion.div>
+          
+          <h1 className="font-display text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] mb-6">
+            {greeting}, <br />
+            <span className="text-gold italic">{name}</span>
           </h1>
-          <p className="text-slate-400 text-lg font-light leading-relaxed mb-8">
+          
+          <p className="text-slate-400 text-lg md:text-xl font-medium leading-relaxed max-w-2xl mb-10">
             Welcome to the Command Hub. Your church media operations are synced and ready for deployment.
           </p>
+          
           <div className="flex flex-wrap gap-4">
-            <button onClick={() => navigate('/studio')} className="btn-gold px-8 py-3 command-btn flex items-center gap-2 shadow-xl shadow-gold/20 active:scale-95">
-              <Sparkles size={18} />
+            <button 
+              onClick={() => navigate('/studio')}
+              className="btn-gold h-14 px-10 shadow-xl shadow-gold/20"
+            >
+              <PlusCircle size={20} />
               Quick Gen
             </button>
-            <button onClick={() => navigate('/queue')} className="bg-white/10 hover:bg-white/20 px-8 py-3 rounded-xl font-display letter-spacing-1 text-sm tracking-widest uppercase transition-all backdrop-blur-sm border border-white/10 active:scale-95">
+            <button 
+              onClick={() => navigate('/queue')}
+              className="h-14 px-10 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-sm tracking-widest uppercase transition-all backdrop-blur-md active:scale-95"
+            >
               View Queue ({stats.queue})
             </button>
           </div>
         </div>
-      </div>
+      </section>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main Column */}
-        <div className="lg:col-span-2 space-y-8">
-          {/* Next Actions */}
+      {/* Stats & Briefing Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        {/* Main Content Side */}
+        <div className="lg:col-span-8 space-y-10">
+          
+          {/* Best Next Actions */}
           <section>
-            <div className="flex items-center justify-between mb-4 px-2">
-              <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-slate-500">Best Next Actions</h2>
-              <div className="h-px flex-1 bg-slate-200 mx-4" />
+            <div className="flex items-center gap-4 mb-6">
+              <h2 className="text-[11px] font-bold tracking-[0.3em] uppercase text-slate-500 whitespace-nowrap">Command Briefing</h2>
+              <div className="h-px w-full bg-slate-200/60" />
             </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {nextActions.map((action, i) => (
-                <motion.button
-                  whileHover={{ y: -4 }}
+                <motion.div
                   key={i}
+                  whileHover={{ y: -4 }}
                   onClick={() => navigate(action.path)}
-                  className={`p-5 rounded-2xl border flex items-center gap-4 text-left transition-all group ${action.bg}`}
+                  className={`p-6 rounded-premium border relative overflow-hidden group cursor-pointer transition-all ${action.theme}`}
                 >
-                  <div className={`p-3 rounded-xl bg-white shadow-sm ${action.color}`}>
-                    {(() => {
-                      const Icon = action.icon;
-                      return <Icon size={24} strokeWidth={2} />;
-                    })()}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm">
+                      <action.icon size={24} strokeWidth={1.5} />
+                    </div>
+                    <ArrowUpRight size={20} className="opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <div className="flex-1">
-                    <div className="text-[10px] font-bold tracking-widest text-slate-400 uppercase mb-1">Recommended</div>
-                    <div className="text-sm font-bold text-navy leading-tight">{action.label}</div>
+                  <div>
+                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 block mb-1">Recommended Action</span>
+                    <h3 className="text-lg font-bold tracking-tight">{action.label}</h3>
                   </div>
-                  <ChevronRight size={18} className="text-slate-300 group-hover:text-navy transition-colors" />
-                </motion.button>
+                </motion.div>
               ))}
             </div>
           </section>
 
-          {/* Today's Tasks */}
+          {/* Today's Focus Card */}
           <section className="premium-card overflow-hidden">
-            <div className="p-6 border-b border-slate-100 bg-ivory/50 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-navy text-gold flex items-center justify-center">
-                  <LayoutDashboard size={20} />
+            <div className="p-8 border-b border-slate-100 bg-offwhite flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-navy text-gold flex items-center justify-center shadow-lg shadow-navy/20">
+                  <LayoutDashboard size={24} />
                 </div>
                 <div>
-                  <h3 className="text-sm font-bold text-navy uppercase tracking-wider leading-none">
-                    {dayData.forward ? 'Look Ahead: Prep Sunday' : "Today's Command"}
+                  <h3 className="text-lg font-bold text-navy tracking-tight uppercase">
+                    {dayData.forward ? 'Strategic prep: Sunday' : "Today's Deployment"}
                   </h3>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    {DAYS[dayIdx]}, {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
+                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                    {DAYS[dayIdx].toUpperCase()}, {new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' })}
                   </span>
                 </div>
               </div>
-              <div className="px-3 py-1 bg-gold/10 text-gold text-[10px] font-bold rounded-lg tracking-widest uppercase">
-                Active Cycle
+              <div className="px-4 py-1.5 bg-green-500/10 text-green-600 text-[10px] font-bold rounded-full tracking-[0.2em] uppercase border border-green-500/10">
+                Live Status
               </div>
             </div>
-            <div className="p-6 space-y-4">
+            <div className="p-8 grid gap-6">
               {dayData.tasks.map((task, i) => (
-                <div key={i} className="flex gap-4 group">
-                  <div className="mt-1">
-                    <div className="w-5 h-5 rounded-full border-2 border-slate-200 flex items-center justify-center group-hover:border-gold group-hover:bg-ivory transition-all cursor-pointer shadow-sm">
+                <div key={i} className="flex gap-5 group items-start">
+                  <div className="mt-1 flex-shrink-0">
+                    <div className="w-6 h-6 rounded-full border-2 border-slate-100 flex items-center justify-center group-hover:border-gold group-hover:bg-gold-light/20 transition-all cursor-pointer">
                       <div className="w-2 h-2 rounded-full bg-gold opacity-0 group-hover:opacity-100" />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-600 font-medium group-hover:text-navy transition-colors">{task}</p>
+                  <p className="text-base text-slate-600 font-medium group-hover:text-navy transition-colors pt-0.5">{task}</p>
                 </div>
               ))}
             </div>
           </section>
         </div>
 
-        {/* Sidebar Column */}
-        <div className="space-y-8">
-          {/* Quick Stats Grid */}
+        {/* Sidebar Status Column */}
+        <div className="lg:col-span-4 space-y-8">
+          
+          {/* Quick Metrics */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="premium-card p-5 text-center">
-              <div className="text-3xl font-display text-navy mb-1 tracking-wider">{stats.queue}</div>
-              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Pending Posts</div>
+            <div className="premium-card p-6 text-center group hover:bg-gold-light/10">
+              <div className="text-4xl font-display font-bold text-navy mb-2 tracking-tighter group-hover:scale-110 transition-transform">{stats.queue}</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Queue Items</div>
             </div>
-            <div className="premium-card p-5 text-center">
-              <div className="text-3xl font-display text-gold mb-1 tracking-wider">{stats.followups}</div>
-              <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Care Alerts</div>
+            <div className="premium-card p-6 text-center group hover:bg-gold-light/10">
+              <div className="text-4xl font-display font-bold text-gold mb-2 tracking-tighter group-hover:scale-110 transition-transform">{stats.followups}</div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Care Alerts</div>
             </div>
           </div>
 
-          {/* Weekly Rhythm */}
-          <section className="premium-card p-6">
-            <div className="flex items-center gap-2 mb-6 text-navy">
-              <CalendarIcon size={18} className="text-gold" />
-              <h3 className="text-xs font-bold uppercase tracking-[0.2em]">Weekly Rhythm</h3>
+          {/* Weekly Rhythm Visualizer */}
+          <section className="premium-card p-8">
+            <div className="flex items-center gap-3 mb-8">
+              <CalendarIcon size={20} className="text-gold" />
+              <h3 className="text-xs font-bold font-display uppercase tracking-[0.2em] text-navy">Weekly Rhythm</h3>
             </div>
             <div className="space-y-3">
               {DAY_SHORT.map((day, i) => (
                 <div 
                   key={day} 
-                  className={`flex items-center gap-4 p-3 rounded-xl transition-all ${i === dayIdx ? 'bg-navy text-white shadow-lg shadow-navy/10 scale-[1.02]' : 'bg-slate-50 text-slate-400'}`}
+                  className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${i === dayIdx ? 'bg-navy text-white shadow-xl shadow-navy/20 scale-[1.05]' : 'bg-offwhite text-slate-400 hover:bg-slate-100'}`}
                 >
-                  <div className={`w-10 text-center font-display text-sm tracking-widest ${i === dayIdx ? 'text-gold' : 'text-slate-500'}`}>
+                  <div className={`w-10 text-center font-display text-sm font-bold tracking-widest ${i === dayIdx ? 'text-gold' : 'text-slate-400'}`}>
                     {day.toUpperCase()}
                   </div>
-                  <div className="h-4 w-px bg-slate-200 opacity-20" />
-                  <div className="flex-1 text-[10px] font-bold uppercase tracking-widest truncate">
+                  <div className={`h-4 w-px ${i === dayIdx ? 'bg-white/20' : 'bg-slate-200'}`} />
+                  <div className={`flex-1 text-[11px] font-bold uppercase tracking-widest truncate ${i === dayIdx ? 'text-white' : 'text-slate-500'}`}>
                     {WEEKLY_RHYTHM[i].short}
                   </div>
-                  {i === dayIdx && <div className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />}
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Media Brain Status */}
-          <div className="gold-border-gradient premium-card p-6 bg-ivory/30">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gold/10 flex items-center justify-center text-gold">
-                <TrendingUp size={16} />
+          {/* AI Brain Status Widget */}
+          <div className="premium-card-accent p-8 relative overflow-hidden group">
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gold/10 rounded-full blur-2xl group-hover:bg-gold/20 transition-all" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gold text-white flex items-center justify-center shadow-lg shadow-gold/20">
+                <BrainCircuit size={22} />
               </div>
-              <h3 className="text-xs font-bold text-navy uppercase tracking-widest">AI Brain Sync</h3>
+              <h3 className="text-xs font-bold text-navy uppercase tracking-widest">Neural Link</h3>
             </div>
-            <p className="text-[11px] text-slate-500 font-medium leading-relaxed mb-4">
-              The church knowledge base is currently mapped for Sunday delivery. AI Engine is primed for generation.
+            <p className="text-xs text-slate-500 font-bold leading-relaxed mb-6 uppercase tracking-wider">
+              Church knowledge is mapped for Sunday delivery. AI Engine is primed.
             </p>
-            <button onClick={() => navigate('/church')} className="text-[10px] font-bold text-gold uppercase tracking-widest hover:text-navy transition-colors flex items-center gap-1">
-              Configure Brain <ChevronRight size={12} />
+            <button 
+              onClick={() => navigate('/church')}
+              className="w-full py-4 bg-white border border-gold/20 rounded-xl text-[10px] font-bold text-gold uppercase tracking-[0.2em] hover:bg-gold hover:text-white transition-all shadow-sm"
+            >
+              Configure Brain Nexus
             </button>
           </div>
         </div>
@@ -239,3 +264,4 @@ export default function Home() {
     </div>
   );
 }
+

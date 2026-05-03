@@ -1,1 +1,67 @@
 @import "tailwindcss";
+
+@theme {
+  --color-navy: #0F172A;
+  --color-navy-dark: #020617;
+  --color-gold: #D4AF37;
+  --color-gold-light: #F9F3E5;
+  --color-ivory: #FDFCF8;
+  --color-premium-blue: #F0F4F8;
+  --color-offwhite: #FAF9F6;
+  
+  --radius-premium: 1.25rem;
+  --radius-premium-lg: 2rem;
+  
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-ivory text-navy antialiased selection:bg-gold selection:text-white font-sans;
+  }
+}
+
+@layer components {
+  .premium-card {
+    @apply bg-white border border-slate-100 rounded-premium shadow-sm hover:shadow-md transition-all duration-300;
+  }
+  
+  .premium-card-accent {
+    @apply premium-card border-gold/10 bg-gold-light/20;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-gold transition-all duration-200 text-sm font-medium;
+  }
+
+  .sidebar-link-active {
+    @apply text-white bg-white/10 shadow-lg shadow-black/20;
+  }
+
+  .btn-primary {
+    @apply h-12 px-8 bg-navy text-white rounded-xl font-bold text-sm tracking-tight hover:bg-navy-dark transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer;
+  }
+
+  .btn-gold {
+    @apply h-12 px-8 bg-gold text-white rounded-xl font-bold text-sm tracking-tight hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer;
+  }
+
+  .btn-ghost {
+    @apply h-12 px-8 text-navy font-bold text-sm tracking-tight hover:bg-slate-50 transition-all rounded-xl flex items-center justify-center gap-2 cursor-pointer;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-200 rounded-full hover:bg-slate-300 transition-colors;
+}
