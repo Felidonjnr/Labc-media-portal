@@ -3,27 +3,26 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChurchProvider } from './contexts/ChurchContext';
 
-import Login from './components/Auth/Login';
-import TopNav from './components/Layout/TopNav';
-import Home from './pages/Home';
-import ContentStudio from './pages/ContentStudio';
-import SermonEngine from './pages/SermonEngine';
-import FollowUpCentre from './pages/FollowUpCentre';
-import MediaStudio from './pages/MediaStudio';
-import ContentCalendar from './pages/ContentCalendar';
-import ContentQueue from './pages/ContentQueue';
-import ContentHistory from './pages/ContentHistory';
-import KnowledgeDump from './pages/KnowledgeDump';
-import ChurchKnowledge from './pages/ChurchKnowledge';
-import TeamAccess from './pages/TeamAccess';
+import DashboardShell from './components/Layout/DashboardShell';
+import { motion } from 'motion/react';
+import { Clock, LogOut, Sparkles } from 'lucide-react';
 
 function Loading() {
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F4FF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-      <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.4rem', letterSpacing: '4px', color: '#0A1628' }}>LIGHT ASSEMBLY</div>
-      <div style={{ display: 'flex', gap: '8px' }}>
-        {[0,1,2].map(i => (
-          <div key={i} style={{ width: '8px', height: '8px', background: '#C9960C', borderRadius: '50%', animation: 'pulse 1.2s ease-in-out infinite', animationDelay: `${i*0.2}s` }} />
+    <div className="min-h-screen bg-navy-dark flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-16 h-16 bg-gold rounded-2xl flex items-center justify-center mb-6 animate-bounce shadow-2xl shadow-gold/20">
+        <span className="font-display text-white text-3xl pt-1">L</span>
+      </div>
+      <div className="font-display text-2xl tracking-[0.3em] text-white mb-2">INITIALIZING PORTAL</div>
+      <div className="text-[10px] font-bold tracking-[0.4em] text-silver uppercase mb-8">Light Assembly Media Command</div>
+      <div className="flex gap-2">
+        {[0, 1, 2].map(i => (
+          <motion.div
+            key={i}
+            animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+            transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+            className="w-2 h-2 bg-gold rounded-full"
+          />
         ))}
       </div>
     </div>
@@ -32,19 +31,43 @@ function Loading() {
 
 function Pending({ logout }) {
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F4FF', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-      <div style={{ background: 'white', borderRadius: '20px', boxShadow: '0 8px 40px rgba(10,22,40,0.10)', padding: '2rem', maxWidth: '360px', width: '100%', textAlign: 'center' }}>
-        <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>⏳</div>
-        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: '1.5rem', letterSpacing: '3px', color: '#D97706', marginBottom: '0.75rem' }}>PENDING APPROVAL</div>
-        <p style={{ fontSize: '0.78rem', color: '#9AA3B2', lineHeight: 1.6, marginBottom: '1.25rem' }}>Your request has been submitted. The admin will approve you shortly.</p>
-        <button onClick={logout} style={{ background: 'none', border: '1px solid #E4E8F0', color: '#9AA3B2', borderRadius: '8px', padding: '0.5rem 1rem', fontSize: '0.72rem', cursor: 'pointer' }}>Sign out</button>
-      </div>
+    <div className="min-h-screen bg-bg flex items-center justify-center p-6">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="premium-card p-10 max-w-md w-full text-center shadow-2xl relative overflow-hidden"
+      >
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-gold" />
+        <div className="w-20 h-20 bg-ivory rounded-full flex items-center justify-center mx-auto mb-6 border border-gold/10">
+          <Clock size={32} className="text-gold" strokeWidth={1.5} />
+        </div>
+        <h2 className="font-display text-3xl tracking-widest text-navy mb-4">ACCESS PENDING</h2>
+        <p className="text-slate-500 text-sm leading-relaxed mb-8">
+          Your account has been mapped to the media team registry. Please wait for the Lead Media Director to confirm your deployment.
+        </p>
+        <div className="space-y-3">
+          <button 
+            onClick={() => window.location.reload()}
+            className="w-full h-11 bg-navy text-white rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-navy-muted transition-colors flex items-center justify-center gap-2"
+          >
+            <Sparkles size={14} />
+            Check Status
+          </button>
+          <button 
+            onClick={logout} 
+            className="w-full h-11 bg-white border border-slate-200 text-slate-500 rounded-xl font-bold text-xs tracking-widest uppercase hover:bg-slate-50 transition-colors flex items-center justify-center gap-2"
+          >
+            <LogOut size={14} />
+            Switch Account
+          </button>
+        </div>
+      </motion.div>
     </div>
   );
 }
 
 function AppRoutes() {
-  const { user, userProfile, loading, logout, isAdmin } = useAuth();
+  const { user, userProfile, loading, logout } = useAuth();
 
   if (loading) return <Loading />;
   if (!user) return <Login />;
@@ -55,11 +78,12 @@ function AppRoutes() {
 
   if (userProfile.status === 'suspended') {
     return (
-      <div style={{ minHeight: '100vh', background: '#F0F4FF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ background: 'white', borderRadius: '20px', padding: '2rem', textAlign: 'center', color: '#DC2626' }}>
-          <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🚫</div>
-          <div>Access suspended. Contact admin.</div>
-          <button onClick={logout} style={{ marginTop: '1rem', background: 'none', border: '1px solid #E4E8F0', color: '#9AA3B2', borderRadius: '8px', padding: '0.5rem 1rem', cursor: 'pointer' }}>Sign out</button>
+      <div className="min-h-screen bg-red-50 flex items-center justify-center p-6">
+        <div className="premium-card p-10 max-w-sm w-full text-center border-red-100 shadow-xl">
+          <div className="text-4xl mb-4">🚫</div>
+          <h2 className="text-xl font-bold text-red-700 mb-2">ACCESS SUSPENDED</h2>
+          <p className="text-red-600/70 text-sm mb-6">Your credentials have been revoked by the security protocol.</p>
+          <button onClick={logout} className="w-full py-3 bg-red-600 text-white rounded-xl font-bold text-xs tracking-widest uppercase shadow-lg shadow-red-200">Sign out</button>
         </div>
       </div>
     );
@@ -67,9 +91,8 @@ function AppRoutes() {
 
   return (
     <ChurchProvider>
-      <div style={{ minHeight: '100vh', background: '#F0F4FF', display: 'flex', flexDirection: 'column' }}>
-        <TopNav />
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+      <DashboardShell>
+        <div className="page-container">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/studio" element={<ContentStudio />} />
@@ -85,7 +108,7 @@ function AppRoutes() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
-      </div>
+      </DashboardShell>
     </ChurchProvider>
   );
 }
